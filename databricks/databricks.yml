@@ -1,0 +1,29 @@
+# Databricks Asset Bundle - pipeline medallion e-commerce
+# Déploiement :  databricks bundle validate / deploy / run ecommerce_medallion
+bundle:
+  name: ecommerce_pipeline
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Catalog Unity Catalog (créé par Terraform)
+    default: ecommerce
+  raw_bucket:
+    description: Bucket S3 alimenté par le S3 Sink Connector
+    default: my-data-project-kafka-raw
+  abandon_after_hours:
+    description: Un panier encore "active" après ce délai est considéré abandonné
+    default: "1"
+  cluster_id:
+    description: Cluster créé par Terraform (résolu par son nom)
+    lookup:
+      cluster: my-data-workspace-standard-cluster
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://dbc-91c21d5f-d8b2.cloud.databricks.com
