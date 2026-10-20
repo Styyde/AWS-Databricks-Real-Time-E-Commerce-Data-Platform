@@ -6,30 +6,7 @@ Pipeline de données de bout en bout. Elle capture en continu chaque modificatio
 
 ## Architecture
 
-```mermaid
-flowchart LR
-    subgraph LOCAL["Local · Docker Compose"]
-        direction LR
-        SIM["Simulateur"] --> API["API FastAPI"]
-        API --> PG[("PostgreSQL")]
-        PG -- "WAL" --> DBZ["Debezium"]
-        DBZ --> KAFKA["Kafka<br/>1 topic par table"]
-        KAFKA --> SINK["S3 Sink<br/>Connector"]
-    end
-
-    subgraph CLOUD["AWS"]
-        S3[("S3<br/>Parquet brut")]
-    end
-
-    subgraph DBX["Databricks · catalog ecommerce"]
-        direction LR
-        BRONZE["Bronze<br/>événements CDC"] --> SILVER["Silver<br/>état courant validé"] --> GOLD["Gold<br/>faits et KPIs"]
-    end
-
-    SINK --> S3
-    S3 -- "Auto Loader" --> BRONZE
-    GOLD --> BI["Reporting<br/>SQL / BI"]
-```
+![E-commerce data platform architecture: simulator, FastAPI, PostgreSQL, Debezium, Kafka, S3 and Databricks Bronze, Silver and Gold](docs/images/ecommerce-data-platform.png)
 
 Le flux se découpe en trois blocs :
 
